@@ -1,6 +1,7 @@
-
-
 package com.example.tjapp
+
+//JEG HAR BRUGT CHATGPT + ATHENA TIL OPGAVEN
+//HAR KODET MIN NAVBAR VED AT FØLGDE DENNE VIDEO: https://www.youtube.com/watch?v=c8XP_Ee7iqY
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
