@@ -1,0 +1,221 @@
+package com.example.myapplication
+
+//JEG HAR BRUGT CHATGPT + ATHENA TIL OPGAVEN
+//HAR KODET MIN NAVBAR VED AT FØLGDE DENNE VIDEO: https://www.youtube.com/watch?v=c8XP_Ee7iqY
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.myapplication.ui.theme.MyApplicationTheme
+
+data class Warehouse(
+    val id: Int,
+    val name: String,
+    val location: String,
+    val stockCount: Int
+)
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            MyApplicationTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    MainScreen(modifier = Modifier.padding(innerPadding))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MainScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xFFF9F4EE))
+    ) {
+        SearchBar()
+        Spacer(modifier = Modifier.height(16.dp))
+        FilterSection()
+        Spacer(modifier = Modifier.weight(1f))
+        BottomNavigationBar()
+    }
+}
+
+@Composable
+fun SearchBar() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(Color.White, RoundedCornerShape(20.dp))
+            .height(48.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(modifier = Modifier.padding(start = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("🔍 Search", color = Color.Gray, fontSize = 16.sp)
+        }
+    }
+}
+@Composable
+fun FilterSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(Color.White, RoundedCornerShape(12.dp))
+    ) {
+        Text(
+            text = "Filtre",
+            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(16.dp)
+        )
+
+        val warehouses = listOf(
+            Warehouse(1, "Kategori", "Central", 0),
+            Warehouse(2, "Størrelse", "North", 0),
+            Warehouse(3, "Mærke", "East", 2),
+            Warehouse(4, "Farve", "West", 0),
+            Warehouse(5, "Tilstand", "South", 0),
+            Warehouse(6, "Materiale", "Central", 0),
+            Warehouse(7, "Placering", "Remote", 0)
+        )
+
+        warehouses.forEachIndexed { index, warehouse ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { /* Handle click */ }
+                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("•", modifier = Modifier.padding(end = 16.dp), fontSize = 20.sp, color = Color.Black)
+                Text(text = warehouse.name, fontSize = 16.sp, modifier = Modifier.weight(1f))
+
+                // Show the number only for "Mærke"
+                if (warehouse.name == "Mærke") {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .background(Color(0xFF213A1A), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("${warehouse.stockCount}", color = Color.White, fontSize = 12.sp)
+                    }
+                }
+            }
+
+            if (index < warehouses.lastIndex) {
+                Divider(color = Color.LightGray, thickness = 1.dp)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Location Filters Row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            FilterButton("\uD83C\uDDE9\uD83C\uDDF0 Denmark", Color.Gray)
+            FilterButton("\uD83D\uDE86 30 km", Color.Gray)
+            FilterButton("\uD83D\uDE8615 km", Color(0xFF213A1A))
+        }
+
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            FilterButton("Se resultater", Color(0xFF213A1A), true)
+        }
+    }
+}
+
+
+
+@Composable
+fun LocationFilters() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        FilterButton("Denmark", Color.Gray)
+        FilterButton("30 km", Color.Gray)
+        FilterButton("15 km", Color(0xFF213A1A))
+    }
+}
+
+@Composable
+fun FilterButton(text: String, backgroundColor: Color, isLarge: Boolean = false) {
+    Button(
+        onClick = {},
+        modifier = Modifier
+            .height(if (isLarge) 50.dp else 40.dp)
+            .clip(RoundedCornerShape(20.dp)),
+        colors = ButtonDefaults.buttonColors(containerColor = backgroundColor)
+    ) {
+        Text(text, color = Color.White, fontSize = 14.sp)
+    }
+}
+
+@Composable
+fun BottomNavigationBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(Icons.Filled.Home, contentDescription = "Home")
+        Icon(Icons.Filled.Search, contentDescription = "Search")
+
+        Image(
+            painter = painterResource(id = R.drawable.uploadlogo),
+            contentDescription = "Upload",
+            modifier = Modifier.size(60.dp)
+        )
+        Icon(Icons.Filled.Email, contentDescription = "Inbox")
+        Icon(Icons.Filled.Person, contentDescription = "Account")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMainScreen() {
+    MyApplicationTheme {
+        MainScreen()
+    }
+}
